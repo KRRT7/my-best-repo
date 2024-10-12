@@ -9,24 +9,23 @@ def sorter(arr):
 
 
 def decompress_braces(string):
-    numbers = "123456789"
+    numbers = set("123456789")
     stack = []
+    app = stack.append
+    stack_pop = stack.pop
 
     for char in string:
         if char in numbers:
-            stack.append(int(char))
+            app(int(char))
         elif char == "{":
             continue
-        # Below condition tells about what to be done when we encounter alphabyte.
-        elif "a" <= char <= "z" or "A" <= char <= "Z":
-            stack.append(char)
-        # Here you can use "else" also, but for better understanding(to know when
-        # this code block will execute, i am keeping "elif" here).
+        elif char.isalpha():
+            app(char)
         elif char == "}":
-            segment = ""
+            segment = []
             while isinstance(stack[-1], str):
-                popped_char = stack.pop()
-                segment = popped_char + segment
-            num = stack.pop()
-            stack.append(segment * num)
+                segment.append(stack_pop())
+            segment.reverse()
+            num = stack_pop()
+            app("".join(segment) * num)
     return "".join(stack)
