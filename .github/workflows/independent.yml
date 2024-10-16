@@ -15,10 +15,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest , windows-latest, macOS-latest]
         python-version: ['3.12']
-      env:
-        CODEFLASH_API_KEY: ${{ secrets.CODEFLASH_API_KEY }}
       fail-fast: false
-
+    env:
+      CODEFLASH_API_KEY: ${{ secrets.CODEFLASH_API_KEY }}
     runs-on: ${{ matrix.os }}
 
     steps:
