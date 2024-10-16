@@ -12,6 +12,7 @@ jobs:
       CODEFLASH_API_KEY: ${{ secrets.CODEFLASH_API_KEY }}
       CODEFLASH_AI_KEY: ${{ secrets.CODEFLASH_AI_KEY }}
       PR_NUMBER: ${{ github.event.number }}
+      PYTHONIOENCODING = "utf-8"
     steps:
       - uses: actions/checkout@v3
         with:
