@@ -27,3 +27,7 @@ def decompress_braces(string):
             num = stack.pop()
             stack.append(segment * num)
     return "".join(stack)
+
+
+def sorter_one_level_depth(arr):
+    return sorter(arr)
