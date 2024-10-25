@@ -1,10 +1,9 @@
+def sorter_one_level_depth(arr):
+    return sorter(arr)
+
+
 def sorter(arr):
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
-            if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+    arr.sort()  # Using in-place sort to maintain the original list
     return arr
 
 
@@ -27,7 +26,3 @@ def decompress_braces(string):
             num = stack.pop()
             stack.append(segment * num)
     return "".join(stack)
-
-
-def sorter_one_level_depth(arr):
-    return sorter(arr)
