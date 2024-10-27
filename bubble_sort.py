@@ -17,13 +17,14 @@ def decompress_braces(string):
             stack.append(int(char))
         elif char == "{":
             continue
-        elif "a" <= char <= "z" or "A" <= char <= "Z":
+        elif char.isalpha():
             stack.append(char)
         elif char == "}":
-            segment = ""
+            segment_chars = []
             while isinstance(stack[-1], str):
-                popped_char = stack.pop()
-                segment = popped_char + segment
+                segment_chars.append(stack.pop())
+            segment_chars.reverse()
+            segment = "".join(segment_chars)
             num = stack.pop()
             stack.append(segment * num)
     return "".join(stack)
