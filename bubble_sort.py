@@ -1,31 +1,30 @@
 def sorter(arr):
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
-            if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+    arr.sort()
     return arr
 
 
 def decompress_braces(string):
     numbers = "123456789"
     stack = []
+    segment = []
+    append_str = segment.append
+    pop_str = segment.pop
+    append_stack = stack.append
+    pop_stack = stack.pop
 
     for char in string:
         if char in numbers:
-            stack.append(int(char))
-        elif char == "{":
-            continue
-        elif "a" <= char <= "z" or "A" <= char <= "Z":
-            stack.append(char)
+            append_stack(int(char))
+        elif char.isalpha():
+            append_stack(char)
         elif char == "}":
-            segment = ""
-            while isinstance(stack[-1], str):
-                popped_char = stack.pop()
-                segment = popped_char + segment
-            num = stack.pop()
-            stack.append(segment * num)
+            while isinstance((current := pop_stack()), str):
+                append_str(current)
+            num = current
+            segment.reverse()
+            append_stack("".join(segment) * num)
+            segment.clear()
+
     return "".join(stack)
 
 
