@@ -31,3 +31,11 @@ def decompress_braces(string):
 
 def sorter_one_level_depth(arr):
     return sorter(arr)
+
+
+def add(a, b):
+    return a + b
+
+
+def add_one_level_depth(a, b):
+    return add(a, b)
