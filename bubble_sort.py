@@ -38,4 +38,4 @@ def add(a, b):
 
 
 def add_one_level_depth(a, b):
-    return add(a, b)
+    return a + b
