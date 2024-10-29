@@ -1,10 +1,16 @@
 def sorter(arr):
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
+    n = len(arr)
+    for i in range(n - 1):
+        swapped = False
+        for j in range(n - 1 - i):
             if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+                arr[j], arr[j + 1] = (
+                    arr[j + 1],
+                    arr[j],
+                )  # Use tuple unpacking for swapping
+                swapped = True
+        if not swapped:
+            break  # Stop if no elements were swapped in the inner loop, meaning the array is sorted
     return arr
 
 
