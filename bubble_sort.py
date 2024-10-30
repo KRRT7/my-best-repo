@@ -1,3 +1,7 @@
+def sorter_one_level_depth(arr):
+    return sorter(arr)
+
+
 def sorter(arr):
     for i in range(len(arr)):
         for j in range(len(arr) - 1):
@@ -29,7 +33,7 @@ def decompress_braces(string):
     return "".join(stack)
 
 
-def sorter_one_level_depth(arr):
+def sorter_one_level_depth_lower(arr):
     return sorter(arr)
 
 
