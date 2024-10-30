@@ -1,3 +1,6 @@
+import operator
+
+
 def sorter_one_level_depth(arr):
     return sorter(arr)
 
@@ -38,7 +41,7 @@ def sorter_one_level_depth_lower(arr):
 
 
 def add(a, b):
-    return a + b
+    return operator.add(a, b)
 
 
 def add_one_level_depth(a, b):
