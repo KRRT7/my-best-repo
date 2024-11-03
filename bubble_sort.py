@@ -21,15 +21,15 @@ def decompress_braces(string):
             stack.append(int(char))
         elif char == "{":
             continue
-        elif "a" <= char <= "z" or "A" <= char <= "Z":
+        elif char.isalpha():
             stack.append(char)
         elif char == "}":
-            segment = ""
+            segment = []
             while isinstance(stack[-1], str):
-                popped_char = stack.pop()
-                segment = popped_char + segment
+                segment.append(stack.pop())
+            segment.reverse()
             num = stack.pop()
-            stack.append(segment * num)
+            stack.append("".join(segment) * num)
     return "".join(stack)
 
 
