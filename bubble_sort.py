@@ -13,23 +13,23 @@ def sorter(arr):
 
 
 def decompress_braces(string):
-    numbers = "123456789"
+    numbers = set("123456789")
     stack = []
+    append_stack = stack.append
 
     for char in string:
         if char in numbers:
-            stack.append(int(char))
-        elif char == "{":
-            continue
+            append_stack(int(char))
         elif "a" <= char <= "z" or "A" <= char <= "Z":
-            stack.append(char)
+            append_stack(char)
         elif char == "}":
-            segment = ""
+            segment = []
             while isinstance(stack[-1], str):
-                popped_char = stack.pop()
-                segment = popped_char + segment
+                segment.append(stack.pop())
+            segment.reverse()
             num = stack.pop()
-            stack.append(segment * num)
+            append_stack("".join(segment) * num)
+
     return "".join(stack)
 
 
