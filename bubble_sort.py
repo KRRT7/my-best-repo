@@ -3,18 +3,13 @@ def sorter_one_level_depth(arr):
 
 
 def sorter(arr):
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
-            if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+    arr.sort()
     return arr
 
 
-def decompress_braces(string):
+def decompress_braces(string: str) -> str:
     numbers = "123456789"
-    stack = []
+    stack: list[str | int] = []
 
     for char in string:
         if char in numbers:
@@ -27,10 +22,10 @@ def decompress_braces(string):
             segment = ""
             while isinstance(stack[-1], str):
                 popped_char = stack.pop()
-                segment = popped_char + segment
+                segment = str(popped_char) + segment
             num = stack.pop()
-            stack.append(segment * num)
-    return "".join(stack)
+            stack.append(segment * int(num))
+    return "".join([str(item) for item in stack])
 
 
 def sorter_one_level_depth_lower(arr):
@@ -43,3 +38,8 @@ def add(a, b):
 
 def add_one_level_depth(a, b):
     return add(a, b)
+
+
+def find_last_node(nodes, edges):
+    """This function receives a flow and returns the last node."""
+    return next((n for n in nodes if all(e["source"] != n["id"] for e in edges)), None)
