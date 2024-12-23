@@ -6,12 +6,18 @@ def sorter_one_level_depth(arr):
 
 
 def sorter(arr):
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        # Reduce the number of comparisons as the largest elements are sorted
+        for j in range(n - 1 - i):
             if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+                # Swap elements
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        # If no two elements were swapped by inner loop, array is sorted
+        if not swapped:
+            break
     return arr
 
 
