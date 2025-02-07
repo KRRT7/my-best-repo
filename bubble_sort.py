@@ -64,7 +64,7 @@ def process_value(value: int | str) -> str:
 
 def filter_even_numbers(numbers: list[int]) -> list[int]:
     """Filters a list of integers, returning only the even numbers."""
-    return [num for num in numbers if num % 2 == 0]
+    return [num for num in numbers if num & 1 == 0]
 
 
 def process_any_value(value: Any) -> str:
