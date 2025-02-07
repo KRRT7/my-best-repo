@@ -46,7 +46,7 @@ def calculate_tuple_sum(my_tuple: tuple[int, int, int]) -> int:
 
 def check_number_range(num: int, lower: int, upper: int) -> bool:
     """Checks if a number is within a specified range (inclusive)."""
-    return lower <= num <= upper
+    return num >= lower and num <= upper
 
 
 def format_greeting(name: str, age: int) -> str:
