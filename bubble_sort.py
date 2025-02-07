@@ -12,18 +12,6 @@ def sorter(arr: list[int]) -> list[int]:
     return arr
 
 
-@lru_cache(maxsize=None)
-def cached_function(arg):
-    """A simple function with lru_cache."""
-    return arg + 1, cached_function.cache_info()
-
-
-class TestClass:
-    @lru_cache(maxsize=None)
-    def cached_method(self, arg):
-        return arg + 2, self.cached_method.cache_info()
-
-
 def add_numbers(x: int, y: int) -> int:
     """Adds two integers."""
     return x + y
