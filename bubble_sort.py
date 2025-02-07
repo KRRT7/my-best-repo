@@ -3,12 +3,8 @@ from typing import Any
 
 
 def sorter(arr: list[int]) -> list[int]:
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
-            if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+    # Using Timsort, built-in sorting algorithm, O(n log n) time complexity
+    arr.sort()
     return arr
 
 
