@@ -3,12 +3,17 @@ from typing import Any
 
 
 def sorter(arr: list[int]) -> list[int]:
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        for j in range(n - 1 - i):
             if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+                # Swap the elements
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        # If no two elements were swapped in inner loop, break
+        if not swapped:
+            break
     return arr
 
 
