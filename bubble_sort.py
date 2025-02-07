@@ -3,12 +3,18 @@ from typing import Any
 
 
 def sorter(arr: list[int]) -> list[int]:
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
+    n = len(arr)
+    for i in range(n):
+        # Introduced optimization: Stop if no swaps occur, array is sorted
+        swapped = False
+        for j in range(n - 1 - i):  # Reduce the number of comparisons after each pass
             if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+                # Swap elements in a more Pythonic way
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        # If no two elements were swapped by inner loop, then break
+        if not swapped:
+            break
     return arr
 
 
