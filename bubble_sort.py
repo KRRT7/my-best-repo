@@ -19,7 +19,7 @@ def add_numbers(x: int, y: int) -> int:
 
 def concatenate_strings(s1: str, s2: str) -> str:
     """Concatenates two strings."""
-    return s1 + s2
+    return ''.join([s1, s2])
 
 
 def append_to_list(my_list: list[int], element: int) -> list[int]:
