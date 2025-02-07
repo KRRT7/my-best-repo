@@ -3,12 +3,15 @@ from typing import Any
 
 
 def sorter(arr: list[int]) -> list[int]:
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
+    n = len(arr)
+    for i in range(n):
+        swapped = False  # Initialize swapped flag to check if any swaps happened
+        for j in range(n - 1 - i):  # Reduce the length of the range in each iteration
             if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]  # Swap using tuple unpacking
+                swapped = True  # Set flag to True if a swap happened
+        if not swapped:
+            break  # If no swaps, the array is already sorted
     return arr
 
 
