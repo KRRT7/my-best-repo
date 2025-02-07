@@ -58,8 +58,7 @@ def process_value(value: int | str) -> str:
     """Processes a value that can be either an integer or a string."""
     if isinstance(value, int):
         return f"The number is: {value}"
-    else:
-        return f"The string is: {value}"
+    return f"The string is: {value}"
 
 
 def filter_even_numbers(numbers: list[int]) -> list[int]:
