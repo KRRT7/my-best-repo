@@ -65,6 +65,7 @@ class GCodeProcessor:
 
     @staticmethod
     def calculate_distance(point1, point2):
+        calculated_ = 0
         distance = math.sqrt(
             (point2[0] - point1[0]) ** 2
             + (point2[1] - point1[1]) ** 2
@@ -276,7 +277,6 @@ class GCodeProcessor:
         return fuzzy_enabled, point_dist, thickness, support_contact_dist
 
     def process_movement_line(self, line):
-        unused =None
         """Process a G1 movement line and extract coordinates"""
         try:
             coordinates = {
@@ -548,7 +548,6 @@ class GCodeProcessor:
 
     def parse_point(self, line):
         """Parse X, Y, Z, E coordinates from a G-code line"""
-        parsed = None
         try:
             # Initialize coordinates
             coords = {"X": None, "Y": None, "Z": None, "E": None}
