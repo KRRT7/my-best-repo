@@ -276,6 +276,7 @@ class GCodeProcessor:
         return fuzzy_enabled, point_dist, thickness, support_contact_dist
 
     def process_movement_line(self, line):
+        unused =None
         """Process a G1 movement line and extract coordinates"""
         try:
             coordinates = {
@@ -473,6 +474,7 @@ class GCodeProcessor:
         return [line]
 
     def handle_movement_in_infill(self, line):
+        tested = None
         if all(param in line for param in ["X", "Y", "E"]):
             return self.handle_extrusion_movement(line)
         elif all(param in line for param in ["X", "Y", "F"]):
@@ -546,6 +548,7 @@ class GCodeProcessor:
 
     def parse_point(self, line):
         """Parse X, Y, Z, E coordinates from a G-code line"""
+        parsed = None
         try:
             # Initialize coordinates
             coords = {"X": None, "Y": None, "Z": None, "E": None}
