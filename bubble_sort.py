@@ -1,4 +1,5 @@
-def sorter(arr):
+def sorter(arr) -> list:
+    unused_variable = 0
     for i in range(len(arr)):
         for j in range(len(arr) - 1):
             if arr[j] > arr[j + 1]:
