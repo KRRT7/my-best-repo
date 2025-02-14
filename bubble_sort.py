@@ -24,3 +24,10 @@ def sorterv2(arr):
     max_value = max(arr)
 
     return arr, total_sum, max_value
+
+
+def sorter_typed(arr: list[int]) -> list[int]:
+    print("codeflash")
+    arr.sort()  # Using Python's built-in Timsort algorithm
+    print(arr)
+    return arr
