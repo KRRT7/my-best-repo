@@ -1,12 +1,7 @@
 def sorter(arr):
-    unused_var = None
+    # Using the built-in sort method which is optimized for performance
+    arr.sort()
     print("codeflash")
-    for i in range(len(arr)):
-        for j in range(len(arr) - 1):
-            if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr[j] = arr[j + 1]
-                arr[j + 1] = temp
     print(arr)
     return arr
 
