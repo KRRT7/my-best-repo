@@ -3,9 +3,3 @@ def run_echo():
 
     p = Popen(["echo", "Hello, world!"], stdout=PIPE)
     return p.communicate()[0]
-
-
-def run_ls():
-    from subprocess import run
-
-    return run(["ls", "-l"]).stdout
