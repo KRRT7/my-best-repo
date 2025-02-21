@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Any, Tuple, List, Optional
 import re
 import sys
 import logging
@@ -48,7 +49,7 @@ LOOKUP_TABLES = {
 
 
 class GCodeProcessor:
-    def __init__(self, config):
+    def __init__(self, config: Any):
         self.config = config
         self.lookup = None
         self.current_layer_height = 0.0
@@ -59,12 +60,15 @@ class GCodeProcessor:
         self.current_speed = None
         self.has_overhang_in_layer = False
         self.current_layer = None
-        self.accumulated_distance = 0.0  # Track distance along perimeter
-        self.last_wobble_point = None  # Last point where we applied wobble
+        self.accumulated_distance = 0.0
+        self.last_wobble_point = None
         self.in_fuzzy_section = False
+        self.regex_speed = re.compile(r"F([-+]?[0-9]*\.?[0-9]+)")
 
     @staticmethod
-    def calculate_distance(point1, point2):
+    def calculate_distance(
+        point1: Tuple[float, float, float], point2: Tuple[float, float, float]
+    ) -> float:
         distance = math.sqrt(
             (point2[0] - point1[0]) ** 2
             + (point2[1] - point1[1]) ** 2
@@ -74,8 +78,12 @@ class GCodeProcessor:
         return distance
 
     def interpolate_with_constant_resolution(
-        self, start_point, end_point, segment_length, total_extrusion
-    ):
+        self,
+        start_point: Tuple[float, float, float],
+        end_point: Tuple[float, float, float],
+        segment_length: float,
+        total_extrusion: float,
+    ) -> List[Tuple[float, float, float, float]]:
         distance = self.calculate_distance(start_point, end_point)
         if distance == 0:
             logging.debug(
@@ -146,8 +154,11 @@ class GCodeProcessor:
         return points
 
     def interpolate_with_constant_resolution_XY(
-        self, start_point, end_point, total_extrusion
-    ):
+        self,
+        start_point: Tuple[float, float, float, float],
+        end_point: Tuple[float, float, float, float],
+        total_extrusion: float,
+    ) -> List[Tuple[float, float, float, float]]:
         """Apply fuzzy skin effect along the perimeter."""
         original_distance = self.calculate_distance(start_point, end_point)
         if original_distance == 0:
@@ -195,7 +206,7 @@ class GCodeProcessor:
 
         return points
 
-    def detect_slicer(self, gcode_lines):
+    def detect_slicer(self, gcode_lines: List[str]) -> Optional[str]:
         for line in gcode_lines[:10]:
             if "PrusaSlicer" in line:
                 return "prusaslicer"
@@ -205,13 +216,15 @@ class GCodeProcessor:
                 return "bambustudio"
         return None
 
-    def detect_gcode_flavor(self, gcode_lines):
+    def detect_gcode_flavor(self, gcode_lines: List[str]) -> Optional[str]:
         for line in gcode_lines:
             if line.startswith("; gcode_flavor ="):
                 return line.split("=")[-1].strip()
         return None
 
-    def process_fuzzy_skin_settings(self, gcode_lines):
+    def process_fuzzy_skin_settings(
+        self, gcode_lines: List[str]
+    ) -> Tuple[bool, Optional[float], Optional[float], Optional[float]]:
         fuzzy_enabled, point_dist, thickness, support_contact_dist = (
             self._process_basic_fuzzy_settings(gcode_lines)
         )
@@ -224,7 +237,9 @@ class GCodeProcessor:
 
         return fuzzy_enabled, point_dist, thickness, support_contact_dist
 
-    def _process_basic_fuzzy_settings(self, gcode_lines):
+    def _process_basic_fuzzy_settings(
+        self, gcode_lines: List[str]
+    ) -> Tuple[bool, Optional[float], Optional[float], Optional[float]]:
         """Original fuzzy settings processing logic"""
         fuzzy_enabled = False
         point_dist = None
@@ -275,8 +290,10 @@ class GCodeProcessor:
 
         return fuzzy_enabled, point_dist, thickness, support_contact_dist
 
-    def process_movement_line(self, line):
-        unused =None
+    def process_movement_line(
+        self, line: str
+    ) -> Tuple[Optional[Tuple[float, float, float]], float]:
+        unused = None
         """Process a G1 movement line and extract coordinates"""
         try:
             coordinates = {
@@ -302,7 +319,7 @@ class GCodeProcessor:
             logging.debug(f"Error processing movement line: {line.strip()} - {e}")
             return None, 0.0
 
-    def process_file(self):
+    def process_file(self) -> None:
         with open(self.config.input_file, "r", encoding="utf-8") as f:
             gcode_lines = f.readlines()
 
@@ -348,7 +365,7 @@ class GCodeProcessor:
         with open(self.config.input_file, "w", encoding="utf-8") as out:
             out.writelines(new_gcode)
 
-    def process_line(self, line):
+    def process_line(self, line: str) -> List[str]:
         # Check for fuzzy section markers
         if line.startswith(";FuzzySectionStart"):
             self.in_fuzzy_section = True
@@ -429,7 +446,7 @@ class GCodeProcessor:
 
         return [line]
 
-    def handle_top_solid_infill(self, line):
+    def handle_top_solid_infill(self, line: str) -> List[str]:
         self.in_top_solid_infill = True
         self.previous_point = None
         result = [line]
@@ -440,18 +457,19 @@ class GCodeProcessor:
             result.append(f"G1 F{self.config.fuzzy_speed}\n")
         return result
 
-    def handle_bridge_infill(self, line):
+    def handle_bridge_infill(self, line: str) -> List[str]:
         self.in_bridge = True
         self.previous_point = None
         result = [line]
         if self.config.fuzzy_speed is not None:
-            current_speed_match = re.search(r"F([-+]?[0-9]*\.?[0-9]+)", line)
+            # We only compile the regex once and store it in an instance variable
+            current_speed_match = self.regex_speed.search(line)
             if current_speed_match:
                 self.current_speed = float(current_speed_match.group(1))
             result.append(f"G1 F{self.config.fuzzy_speed}\n")
         return result
 
-    def handle_type_change(self, line):
+    def handle_type_change(self, line: str) -> List[str]:
         """Handle type changes in the G-code"""
         logging.debug(f"Type change: {line.strip()}")
 
@@ -467,13 +485,13 @@ class GCodeProcessor:
 
         return [line]
 
-    def handle_z_movement(self, line):
+    def handle_z_movement(self, line: str) -> List[str]:
         z_match = re.search(r"Z([-+]?[0-9]*\.?[0-9]+)", line)
         if z_match:
             self.current_layer_height = float(z_match.group(1))
         return [line]
 
-    def handle_movement_in_infill(self, line):
+    def handle_movement_in_infill(self, line: str) -> List[str]:
         tested = None
         if all(param in line for param in ["X", "Y", "E"]):
             return self.handle_extrusion_movement(line)
@@ -483,7 +501,7 @@ class GCodeProcessor:
             return self.handle_travel_movement(line)
         return [line]
 
-    def handle_extrusion_movement(self, line):
+    def handle_extrusion_movement(self, line: str) -> List[str]:
         current_point, total_extrusion = self.process_movement_line(line)
         result = []
 
@@ -505,12 +523,12 @@ class GCodeProcessor:
         self.previous_point = current_point
         return result
 
-    def handle_travel_movement(self, line):
+    def handle_travel_movement(self, line: str) -> List[str]:
         current_point, _ = self.process_movement_line(line)
         self.previous_point = current_point
         return [line]
 
-    def handle_external_perimeter_movement(self, line):
+    def handle_external_perimeter_movement(self, line: str) -> List[str]:
         """Handle movement commands for external perimeter"""
         if not "E" in line:  # This is the positioning move
             current_point = self.process_movement_line(line)[0]
@@ -540,13 +558,13 @@ class GCodeProcessor:
         self.previous_point = current_point
         return result
 
-    def format_point_to_gcode(self, point):
+    def format_point_to_gcode(self, point: Tuple[float, float, float, float]) -> str:
         """Format a point into a G-code command"""
         x, y, z, e = point
         # Format with 4 decimal places and ensure we're using the same format as original G-code
         return f"G1 X{x:.4f} Y{y:.4f} E{e:.5f}\n"
 
-    def parse_point(self, line):
+    def parse_point(self, line: str) -> Optional[Tuple[float, float, float, float]]:
         """Parse X, Y, Z, E coordinates from a G-code line"""
         parsed = None
         try:
@@ -597,7 +615,7 @@ class GCodeProcessor:
             logging.error(f"Error parsing line '{line}': {str(e)}")
             return None
 
-    def mark_fuzzy_sections(self, gcode_lines):
+    def mark_fuzzy_sections(self, gcode_lines: List[str]) -> List[str]:
         """Pre-process G-code to mark fuzzy sections based on tool changes"""
         logging.debug("Marking fuzzy sections in G-code")
 
@@ -619,7 +637,7 @@ class GCodeProcessor:
             logging.error(f"Error processing G-code: {str(e)}")
             return []
 
-    def _remove_preheat_commands(self, gcode_lines):
+    def _remove_preheat_commands(self, gcode_lines: List[str]) -> List[str]:
         """Remove all preheating commands for T0 and T1 (OrcaSlicer specific)"""
         filtered_lines = []
         for line in gcode_lines:
@@ -630,7 +648,7 @@ class GCodeProcessor:
             filtered_lines.append(line)
         return filtered_lines
 
-    def _mark_fuzzy_sections_prusa(self, gcode_lines):
+    def _mark_fuzzy_sections_prusa(self, gcode_lines: List[str]) -> List[str]:
         """Original PrusaSlicer logic for marking fuzzy sections"""
         i = 0
         while i < len(gcode_lines) - 1:
@@ -652,7 +670,7 @@ class GCodeProcessor:
 
         return [line for line in gcode_lines if line.strip()]
 
-    def _mark_fuzzy_sections_orca(self, gcode_lines):
+    def _mark_fuzzy_sections_orca(self, gcode_lines: List[str]) -> List[str]:
         """OrcaSlicer/BambuStudio logic for marking fuzzy sections"""
         i = 0
         first_fuzzy_tool = True  # Flag to track first occurrence
@@ -699,7 +717,7 @@ class GCodeProcessor:
 
         return [line for line in gcode_lines if line.strip()]
 
-    def _mark_fuzzy_sections_bambu(self, gcode_lines):
+    def _mark_fuzzy_sections_bambu(self, gcode_lines: List[str]) -> List[str]:
         """BambuStudio logic for marking fuzzy sections"""
         i = 0
         first_fuzzy_tool = True
