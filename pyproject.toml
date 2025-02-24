@@ -2,6 +2,6 @@
 # All paths are relative to this pyproject.toml's directory.
 module-root = "."
 tests-root = "tests"
-test-framework = "pytest"
+test-framework = "unittest"
 ignore-paths = []
 formatter-cmds = ["disabled"]
