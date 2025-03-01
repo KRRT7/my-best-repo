@@ -60,9 +60,10 @@ class GCodeProcessor:
         self.current_speed = None
         self.has_overhang_in_layer = False
         self.current_layer = None
-        self.accumulated_distance = 0.0  # Track distance along perimeter
-        self.last_wobble_point = None  # Last point where we applied wobble
+        self.accumulated_distance = 0.0
+        self.last_wobble_point = None
         self.in_fuzzy_section = False
+        self.regex_speed = re.compile(r"F([-+]?[0-9]*\.?[0-9]+)")
 
     @staticmethod
     def calculate_distance(
@@ -461,7 +462,8 @@ class GCodeProcessor:
         self.previous_point = None
         result = [line]
         if self.config.fuzzy_speed is not None:
-            current_speed_match = re.search(r"F([-+]?[0-9]*\.?[0-9]+)", line)
+            # We only compile the regex once and store it in an instance variable
+            current_speed_match = self.regex_speed.search(line)
             if current_speed_match:
                 self.current_speed = float(current_speed_match.group(1))
             result.append(f"G1 F{self.config.fuzzy_speed}\n")
